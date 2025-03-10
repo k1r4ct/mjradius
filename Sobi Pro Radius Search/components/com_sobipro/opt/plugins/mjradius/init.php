@@ -298,6 +298,58 @@ class MJRadius extends SPPlugin
         }
     }
 
+    // public function AfterExtendedSearch(&$result)
+    // {
+    //     if (!$this->m_enabled) {
+    //         return;
+    //     }
+    //     // prima otteniamo la lista delle entry senza coordinate,
+    //     // poi le entry da escludere, e infine filtriamo in base al radius
+    //     $withoutCoord   = $this->filterWithoutCoordinatesAfterExtendedSearch($result);
+    //     $inExclude      = $this->filterExludeAfterExtendedSearch($result, $withoutCoord);
+    //     $inExcludeGoogle= $this->filterGoogleExludeAfterExtendedSearch($result, $withoutCoord);
+    //     $vRadRes        = $this->filterRadiusAfterExtendedSearch($result);
+
+    //     if (!$vRadRes) {
+    //         return; // non abbiamo un center definito o radius
+    //     }
+
+    //     $inRadius = $vRadRes[0];
+    //     $dist     = $vRadRes[1];
+    //     $resultOri= $result;
+    //     $result   = array();
+
+    //     if (!count($inRadius)) {
+    //         return;
+    //     }
+
+    //     foreach ($inRadius as $rad) {
+    //         // Se la distanza (distance - salesArea) è > $dist e non è fra le exclusion, saltiamo
+    //         if ((($rad->distance - $rad->salesArea) > $dist)
+    //             && (!in_array($rad->id, $inExclude))
+    //             && (!in_array($rad->id, $inExcludeGoogle))) {
+    //             continue;
+    //         }
+    //         // se c'era una query "pura" di SobiPro
+    //         if ($this->m_sprequest) {
+    //             if (in_array($rad->id, $resultOri)) {
+    //                 $result[] = $rad->id;
+    //             }
+    //         } else {
+    //             // ricerchiamo tutte
+    //             $result[] = $rad->id;
+    //         }
+    //     }
+    //     // includiamo in coda le entry senza coordinate se necessario
+    //     if ($this->m_useNotGeocode > 0 && is_array($withoutCoord) && count($withoutCoord)) {
+    //         foreach ($withoutCoord as $noCo) {
+    //             if (!in_array($noCo, $result)) {
+    //                 $result[] = $noCo;
+    //             }
+    //         }
+    //     }
+    // }
+
     public function AfterExtendedSearch(&$result)
     {
         if (!$this->m_enabled) {
@@ -330,16 +382,21 @@ class MJRadius extends SPPlugin
                 && (!in_array($rad->id, $inExcludeGoogle))) {
                 continue;
             }
-            // se c'era una query "pura" di SobiPro
+            
+            // CORREZIONE: Modifica questa condizione per includere i risultati
+            // quando si cerca solo per località (radius) senza keyword
             if ($this->m_sprequest) {
+                // Se c'è una query specifica, verificare che l'ID sia nei risultati originali
                 if (in_array($rad->id, $resultOri)) {
                     $result[] = $rad->id;
                 }
             } else {
-                // ricerchiamo tutte
+                // Se non c'è query specifica (solo ricerca per località),
+                // includiamo SEMPRE tutti i risultati nel raggio specificato
                 $result[] = $rad->id;
             }
         }
+        
         // includiamo in coda le entry senza coordinate se necessario
         if ($this->m_useNotGeocode > 0 && is_array($withoutCoord) && count($withoutCoord)) {
             foreach ($withoutCoord as $noCo) {
