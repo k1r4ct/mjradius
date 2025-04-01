@@ -6,6 +6,7 @@
  * @license   GNU/GPL
  * @author    Cédric P.
  * @website   www.myJoom.com
+ * @update    Daniele Bellante
  */
 
 defined('_JEXEC') or die;

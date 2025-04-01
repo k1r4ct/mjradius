@@ -5,6 +5,7 @@
  * @copyright Copyright © 2012
  * @license   GNU/GPL
  * @author    ...
+ * @update Daniele Bellante
  */
 
 defined('_JEXEC') or die;
